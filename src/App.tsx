@@ -3,7 +3,7 @@ import axios from 'axios';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { auth, provider } from './firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { io } from 'socket.io-client'; // ✅ Socket.io
+import { io } from 'socket.io-client';
 import './App.css';
 
 interface Task {
@@ -12,7 +12,9 @@ interface Task {
   completed: boolean;
 }
 
-const socket = io('http://localhost:5000'); // ✅ Connect to server
+// ✅ Use live backend URL instead of localhost
+const API_BASE = 'https://taskwise-backend-af7x.onrender.com';
+const socket = io(API_BASE); // ✅ Update socket URL
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -20,14 +22,13 @@ function App() {
   const [user, setUser] = useState<any>(null);
 
   const fetchTasks = async () => {
-    const res = await axios.get<Task[]>('http://localhost:5000/api/tasks');
+    const res = await axios.get<Task[]>(`${API_BASE}/api/tasks`);
     setTasks(res.data);
   };
 
   useEffect(() => {
     fetchTasks();
 
-    // ✅ Socket listeners
     socket.on('taskAdded', (task: Task) => {
       setTasks((prev) => [...prev, task]);
     });
@@ -51,23 +52,22 @@ function App() {
 
   const addTask = async () => {
     if (!newTask.trim()) return;
-    await axios.post<Task>('http://localhost:5000/api/tasks', {
+    await axios.post<Task>(`${API_BASE}/api/tasks`, {
       title: newTask,
     });
     setNewTask('');
-    // 👆 No need to manually update state. Socket.io will do it.
   };
 
   const toggleComplete = async (id: string) => {
     const task = tasks.find((t) => t._id === id);
     if (!task) return;
-    await axios.put(`http://localhost:5000/api/tasks/${id}`, {
+    await axios.put(`${API_BASE}/api/tasks/${id}`, {
       completed: !task.completed,
     });
   };
 
   const deleteTask = async (id: string) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+    await axios.delete(`${API_BASE}/api/tasks/${id}`);
   };
 
   const handleLogin = async () => {
