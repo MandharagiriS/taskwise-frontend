@@ -3,12 +3,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: "AIzaSyA4vwl_1hSQKhcNmSJ-qdWrBBN7bTOEBF4",
+  authDomain: "taskwise-9b04b.firebaseapp.com",
+  projectId: "taskwise-9b04b",
+  storageBucket: "taskwise-9b04b.firebasestorage.app",
+  messagingSenderId: "533657576365",
+  appId: "1:533657576365:web:8c832ae589f733db87b724",
+  measurementId: "G-00MVCBMKP9"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -16,4 +17,3 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 export { auth, provider };
- 
