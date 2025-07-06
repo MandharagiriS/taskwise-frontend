@@ -12,9 +12,9 @@ interface Task {
   completed: boolean;
 }
 
-// ✅ Use live backend URL instead of localhost
+// ✅ Use live backend URL
 const API_BASE = 'https://taskwise-backend-af7x.onrender.com';
-const socket = io(API_BASE); // ✅ Update socket URL
+const socket = io(API_BASE); // ✅ Socket connection
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -90,10 +90,23 @@ function App() {
 
       <div className="auth-buttons">
         {user ? (
-          <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {user.photoURL && (
+              <img
+              src={user.photoURL || "https://via.placeholder.com/40"}
+              alt="User Avatar"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '2px solid #ccc',
+                }}
+              />
+            )}
             <span>👋 Welcome, {user.displayName}</span>
             <button onClick={handleLogout}>Logout</button>
-          </>
+          </div>
         ) : (
           <button onClick={handleLogin}>Login with Google</button>
         )}
