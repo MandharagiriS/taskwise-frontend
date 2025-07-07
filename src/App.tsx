@@ -12,21 +12,20 @@ interface Task {
   completed: boolean;
 }
 
-// ✅ Use live backend URL
 const API_BASE = 'https://taskwise-backend-af7x.onrender.com';
-const socket = io(API_BASE); // ✅ Socket connection
+const socket = io(API_BASE);
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
   const [user, setUser] = useState<any>(null);
 
-  const fetchTasks = async () => {
-    const res = await axios.get<Task[]>(`${API_BASE}/api/tasks`);
-    setTasks(res.data);
-  };
-
   useEffect(() => {
+    const fetchTasks = async () => {
+      const res = await axios.get<Task[]>(`${API_BASE}/api/tasks`);
+      setTasks(res.data);
+    };
+
     fetchTasks();
 
     socket.on('taskAdded', (task: Task) => {
@@ -52,10 +51,20 @@ function App() {
 
   const addTask = async () => {
     if (!newTask.trim()) return;
-    await axios.post<Task>(`${API_BASE}/api/tasks`, {
-      title: newTask,
-    });
-    setNewTask('');
+
+    try {
+      const response = await axios.post(`${API_BASE}/api/tasks`, {
+        title: newTask,
+      });
+
+      console.log('✅ Task added:', response.data);
+      setNewTask('');
+      // Optional if using socket
+      // setTasks((prev) => [...prev, response.data]);
+    } catch (error: any) {
+      console.error('❌ Failed to add task:', error.message || error);
+      alert('Failed to add task. Check console for more.');
+    }
   };
 
   const toggleComplete = async (id: string) => {
@@ -93,8 +102,8 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {user.photoURL && (
               <img
-              src={user.photoURL || "https://via.placeholder.com/40"}
-              alt="User Avatar"
+                src={user.photoURL}
+                alt="User Avatar"
                 style={{
                   width: '40px',
                   height: '40px',
